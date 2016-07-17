@@ -5,12 +5,11 @@ include_once 'phpfilewriter.php';
 
 class PageMaker {
 
-	private $srcDir;
 	private $phpFileWriter;
 
-	public function __construct($data) {
-		$this->srcDir = $data['srcDir'];
-		$this->phpFileWriter = new phpFileWriter();
+	public function __construct($config) {
+		$this->config = $config;
+		$this->phpFileWriter = new phpFileWriter($config);
 	}
 
 	public function makeSite(){
@@ -20,17 +19,20 @@ class PageMaker {
 	}
 
 	private function removeBuiltDirectory(){
-		if(is_dir('built')){
-			Utility::deleteDirectory('built');
+		if(is_dir($this->config->getBuiltDirectory())){
+			Utility::deleteDirectory($this->config->getBuiltDirectory());
 		}
 	}
 
 	private function writeBuiltFileStructure(){
 
-		mkdir('built');
+		mkdir($this->config->getBuiltDirectory());
 
 		$siteFiles = array();
-		Utility::getDirContents('src/site', $siteFiles);
+		Utility::getDirContents(
+			$this->config->getSiteDirectory(), 
+			$siteFiles
+		);
 
 		foreach($siteFiles as $siteFilepath) {
 
@@ -57,7 +59,11 @@ class PageMaker {
 
 	private function getBuiltFilepath($siteFile){
 		$newFilepath = str_replace(getcwd(), '', $siteFile);	
-		$newFilepath = str_replace('src/site', 'built', $newFilepath);
+		$newFilepath = str_replace(
+			$this->config->getSiteDirectory(), 
+			$this->config->getBuiltDirectory(), 
+			$newFilepath
+		);
 		$newFilepath = getcwd() . $newFilepath;
 		return $newFilepath;
 	}

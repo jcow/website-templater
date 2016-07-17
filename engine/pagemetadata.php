@@ -9,6 +9,10 @@ class PageMetaData{
 	// /s spans the regex across multiple lines
 	private $pattern = "/---(.*)---/s";
 
+	public function getMetaData(){
+		return $this->metadata;
+	}
+
 	public function getItem($index){
 		if(array_key_exists($index, $this->metadata)) {
 			return $this->metadata[$index];

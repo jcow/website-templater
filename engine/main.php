@@ -1,9 +1,8 @@
 <?php
 include_once 'pagemaker.php';
+include_once 'config.php';
 
-$srcDir = 'src';
-$pagemaker = new PageMaker(array(
-	'srcDir' => $srcDir
-));
+$config = new Config();
+$pagemaker = new PageMaker($config);
 
 $pagemaker->makeSite();

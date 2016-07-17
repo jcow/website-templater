@@ -4,19 +4,15 @@ include_once 'pagemetadata.php';
 
 class PHPFileWriter{
 
-	private $layouts = array();
-
-	public function __construct(){
-		
+	public function __construct($config){
+		$this->config = $config;
 	}
 
 	public function write($siteFilepath, $builtFilepath){
 
 		$builtFilepath = str_replace(".php", ".html", $builtFilepath);
 
-		$pageContent = $this->readPHPFile($siteFilepath, array(
-			'foobar' => 'This is the stuff to pass to each php file'
-		));
+		$pageContent = $this->readPHPFile($siteFilepath, array());
 
 		$pagemetadata = new PageMetaData();
 		$pageContent = $pagemetadata->extractAndReplace($pageContent);
@@ -26,9 +22,13 @@ class PHPFileWriter{
 			$layout = 'default';
 		}
 
-		$newPageContent = $this->readPHPFile('src/layouts/' . $layout . '.php', array(
+		$pageConfig = array('config' => $this->config->getConfigContents());
+		$pageConfig = array_merge($pageConfig, $pagemetadata->getMetaData());
+		$pageConfig = array_merge($pageConfig, array(
 			'pageContent' => $pageContent
 		));
+
+		$newPageContent = $this->readPHPFile($this->config->getLayoutsDirectory() . '/' . $layout . '.php', $pageConfig);
 
 		$this->writePHPFile($builtFilepath, $newPageContent);
 	}
