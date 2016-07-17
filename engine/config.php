@@ -56,10 +56,6 @@ class Config{
 	private function readConfig($configLocation) {
 		$configContents = json_decode(file_get_contents($configLocation), true);
 
-		// todo - invalid json - do "" quotes
-		// todo make baseUrl a required config option
-		// todo use the baseUrl for all the resources
-
 		if($configContents === null){
 			throw new Exception('Invalid Config at ' . $configLocation);
 		}
